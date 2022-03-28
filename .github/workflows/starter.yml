@@ -1,0 +1,14 @@
+name: starter
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  ansible-lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Lint Ansible Playbooks
+      uses: ansible/ansible-lint-action@main
+      with:
+        entrypoint: "examples/playbooks/norole.yml"
