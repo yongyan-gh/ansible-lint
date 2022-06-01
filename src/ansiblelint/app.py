@@ -71,10 +71,8 @@ class App:
             )
             return
 
-        # If SARIF env variable is set in Github workflow/action
-        # generate SARIF output and stop generating other outputs.
-        if os.getenv("GITHUB_ACTIONS") == "true" and os.getenv("GITHUB_WORKFLOW") and \
-           os.getenv("GITHUB_SARIF"):
+        # If SARIF env variable is set in Github action print only SARIF output
+        if os.getenv("GITHUB_SARIF"):
             formatter = formatters.SarifFormatter(self.options.cwd, True)
             console.print(
                 formatter.format_result(matches), markup=False, highlight=False
