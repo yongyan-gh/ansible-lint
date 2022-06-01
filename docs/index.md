@@ -1,10 +1,8 @@
-.. _lint_documentation:
+(lint-documentation)=
 
-Ansible Lint Documentation
-==========================
+# Ansible Lint Documentation
 
-About Ansible Lint
-``````````````````
+## About Ansible Lint
 
 Ansible Lint is a command-line tool for linting **playbooks, roles and
 collections** aimed towards any Ansible users. Its main goal is to promote
@@ -20,46 +18,58 @@ As any other linter, it is opinionated. Still, its rules are the result of
 community contributions and they can always be disabled based individually or
 by category by each user.
 
-`Ansible Galaxy project <https://github.com/ansible/galaxy/>`_ makes use of
-this linter in order to compute quality scores for `Galaxy Hub <https://galaxy.ansible.com>`_
+[Ansible Galaxy project](https://github.com/ansible/galaxy/) makes use of
+this linter in order to compute quality scores for [Galaxy Hub](https://galaxy.ansible.com)
 contributed content. This does not mean this tool is aimed only to those
-that want to share their code. Files like ``galaxy.yml``, or sections like
-``galaxy_info`` inside ``meta.yml`` help with documentation and maintenance,
+that want to share their code. Files like `galaxy.yml`, or sections like
+`galaxy_info` inside `meta.yml` help with documentation and maintenance,
 even for unpublished roles or collections.
 
-The project was originally started by `@willthames <https://github.com/willthames/>`_,
+The project was originally started by [@willthames](https://github.com/willthames/),
 and has since been adopted by the Ansible Community team. Its development is
 purely community driven, while keeping permanent communications with other
 Ansible teams.
 
-.. toctree::
-   :maxdepth: 3
-   :caption: Installing
+```{toctree}
+:caption: Philosophy
+:maxdepth: 3
 
-   installing
+philosophy
+```
 
-.. toctree::
-   :maxdepth: 3
-   :caption: Usage
+```{toctree}
+:caption: Installing
+:maxdepth: 3
 
-   usage
+installing
+```
 
-.. toctree::
-   :maxdepth: 3
-   :caption: Configuring
+```{toctree}
+:caption: Usage
+:maxdepth: 3
 
-   configuring
+usage
+```
 
-.. toctree::
-   :maxdepth: 4
-   :caption: Rules
+```{toctree}
+:caption: Configuring
+:maxdepth: 3
 
-   rules
-   custom-rules
-   default_rules
+configuring
+```
 
-.. toctree::
-   :caption: Contributing
+```{toctree}
+:caption: Rules
+:maxdepth: 4
 
-   contributing
-   Private unsupported (dev) API autodoc <pkg/modules>
+rules
+custom-rules
+default_rules
+```
+
+```{toctree}
+:caption: Contributing
+
+contributing
+Private unsupported (dev) API autodoc <pkg/modules>
+```

@@ -9,7 +9,12 @@ DEFAULT_KINDS = [
     # Do not sort this list, order matters.
     {"jinja2": "**/*.j2"},  # jinja2 templates are not always parsable as something else
     {"jinja2": "**/*.j2.*"},
+    {"yaml": ".github/**/*.{yaml,yml}"},  # github workflows
     {"text": "**/templates/**/*.*"},  # templates are likely not validable
+    {"execution-environment": "**/execution-environment.yml"},
+    {"ansible-lint-config": "**/.ansible-lint"},
+    {"ansible-lint-config": "**/.config/ansible-lint.yml"},
+    {"ansible-navigator-config": "**/ansible-navigator.{yaml,yml}"},
     {"inventory": "**/inventory/**.yml"},
     {"requirements": "**/meta/requirements.yml"},  # v1 only
     # https://docs.ansible.com/ansible/latest/dev_guide/collections_galaxy_meta.html
@@ -21,7 +26,10 @@ DEFAULT_KINDS = [
     {"tasks": "**/tasks/**/*.{yaml,yml}"},
     {"handlers": "**/handlers/*.{yaml,yml}"},
     {"vars": "**/{host_vars,group_vars,vars,defaults}/**/*.{yaml,yml}"},
+    {"test-meta": "**/tests/integration/targets/*/meta/main.{yaml,yml}"},
     {"meta": "**/meta/main.{yaml,yml}"},
+    {"meta-runtime": "**/meta/runtime.{yaml,yml}"},
+    {"arg_specs": "**/roles/**/meta/argument_specs.{yaml,yml}"},  # role argument specs
     {"yaml": ".config/molecule/config.{yaml,yml}"},  # molecule global config
     {
         "requirements": "**/molecule/*/{collections,requirements}.{yaml,yml}"
@@ -53,6 +61,24 @@ BASE_KINDS = [
     {"text/yaml": "**/.*.{yaml,yml}"},
 ]
 
+
+# Maps kinds to JSON schemas
+# See https://www.schemastore.org/json/
+JSON_SCHEMAS = {
+    # Do not use anchors in these URLs because python-jsonschema does not support them:
+    "playbook": "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible-playbook.json",
+    "tasks": "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible-tasks.json",
+    "vars": "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible-vars.json",
+    "requirements": "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible-requirements.json",
+    "meta": "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible-meta.json",
+    "galaxy": "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible-galaxy.json",
+    "execution-environment": "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible-ee.json",
+    "meta-runtime": "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible-meta-runtime.json",
+    "inventory": "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible-inventory.json",
+    "ansible-lint-config": "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible-lint.json",
+    "ansible-navigator-config": "https://raw.githubusercontent.com/ansible/ansible-navigator/main/src/ansible_navigator/data/ansible-navigator.json",
+    "arg_specs": "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible-argument-specs.json",
+}
 
 options = Namespace(
     cache_dir=None,

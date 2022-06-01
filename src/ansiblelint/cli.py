@@ -67,6 +67,9 @@ def load_config(config_file: str) -> Dict[Any, Any]:
     try:
         with open(config_path, "r", encoding="utf-8") as stream:
             config = yaml.safe_load(stream)
+            # We want to allow passing /dev/null to disable config use
+            if config is None:
+                return {}
             if not isinstance(config, dict):
                 _logger.error("Invalid configuration file %s", config_path)
                 sys.exit(INVALID_CONFIG_RC)
@@ -101,11 +104,11 @@ def get_config_path(config_file: Optional[str] = None) -> Optional[str]:
             filename = os.path.abspath(os.path.join(parent, project_filename))
             if os.path.exists(filename):
                 return filename
-            if os.path.exists(os.path.abspath(os.path.join(parent, ".git"))):
-                # Avoid looking outside .git folders as we do not want end-up
-                # picking config files from upper level projects if current
-                # project has no config.
-                return None
+        if os.path.exists(os.path.abspath(os.path.join(parent, ".git"))):
+            # Avoid looking outside .git folders as we do not want end-up
+            # picking config files from upper level projects if current
+            # project has no config.
+            return None
         (parent, tail) = os.path.split(parent)
     return None
 
@@ -213,21 +216,33 @@ def get_cli_parser() -> argparse.ArgumentParser:
     """Initialize an argument parser."""
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
+    listing_group = parser.add_mutually_exclusive_group()
+    listing_group.add_argument(
         "-L",
+        "--list-rules",
         dest="listrules",
         default=False,
         action="store_true",
-        help="list all the rules",
+        help="List all the rules. For listing rules only the following formats "
+        "for argument -f are supported: {plain, rich, md}",
+    )
+    listing_group.add_argument(
+        "-T",
+        "--list-tags",
+        dest="listtags",
+        action="store_true",
+        help="List all the tags and the rules they cover. Increase the verbosity level "
+        "with `-v` to include 'opt-in' tag and its rules.",
     )
     parser.add_argument(
         "-f",
+        "--format",
         dest="format",
         default="rich",
         choices=[
             "rich",
             "plain",
-            "rst",
+            "md",
             "json",
             "codeclimate",
             "quiet",
@@ -245,6 +260,7 @@ def get_cli_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "-p",
+        "--parseable",
         dest="parseable",
         default=False,
         action="store_true",
@@ -268,6 +284,7 @@ def get_cli_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "-r",
+        "--rules-dir",
         action=AbspathArgAction,
         dest="rulesdir",
         default=[],
@@ -310,13 +327,11 @@ def get_cli_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "-t",
+        "--tags",
         dest="tags",
         action="append",
         default=[],
         help="only check rules whose id/tags match these values",
-    )
-    parser.add_argument(
-        "-T", dest="listtags", action="store_true", help="list all the tags"
     )
     parser.add_argument(
         "-v",
@@ -327,6 +342,7 @@ def get_cli_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "-x",
+        "--skip-list",
         dest="skip_list",
         default=[],
         action="append",
@@ -334,6 +350,7 @@ def get_cli_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "-w",
+        "--warn-list",
         dest="warn_list",
         default=[],
         action="append",
@@ -372,6 +389,7 @@ def get_cli_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "-c",
+        "--config-file",
         dest="config_file",
         help="Specify configuration file to use. By default it will look for '.ansible-lint' or '.config/ansible-lint.yml'",
     )
@@ -481,6 +499,13 @@ def get_config(arguments: List[str]) -> Namespace:
     """Extract the config based on given args."""
     parser = get_cli_parser()
     options = parser.parse_args(arguments)
+
+    if options.listrules and options.format not in ["plain", "rich", "md"]:
+        parser.error(
+            f"argument -f: invalid choice: '{options.format}'. "
+            f"In combination with argument -L only 'plain', "
+            f"'rich' or 'md' are supported with -f."
+        )
 
     file_config = load_config(options.config_file)
 
